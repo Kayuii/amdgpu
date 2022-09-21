@@ -1,0 +1,37 @@
+
+---
+kind: pipeline
+type: docker
+name: build-tag
+
+platform:
+  os: linux
+  arch: amd64
+
+trigger:
+  ref:
+  - refs/tags/rocr-v**
+
+steps:
+- name: publish-rocr
+  image: plugins/docker
+  settings:
+    repo: kayuii/rocr
+    tags:
+    - latest
+    - 20.04
+    - v${DRONE_TAG##*v}
+    dockerfile: rocm-opencl-runtime/Dockerfile-ubuntu-20.04
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    build_args:
+    - ROCM_VERSION=${DRONE_TAG##*v}
+  when:
+    ref:
+    - refs/tags/rocr-v**
+
+
+
+...
