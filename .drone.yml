@@ -10,7 +10,6 @@ platform:
 trigger:
   ref:
   - refs/heads/main
-  - refs/tags/*
 
 steps:
 - name: helloworld
@@ -34,10 +33,34 @@ trigger:
   - refs/tags/rocr-v**
 
 steps:
+- name: helloworld
+  image: ubuntu
+  commands:
+  - "echo ${DRONE_COMMIT_SHA:0:8}"
+  - "echo v${DRONE_TAG##*v}"
+
 - name: publish-rocr
   image: plugins/docker
   settings:
     repo: kayuii/rocr
+    tags:
+    - latest
+    - v${DRONE_TAG##*v}
+    dockerfile: rocm-opencl-runtime/Dockerfile-ubuntu-20.04
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    build_args:
+    - ROCM_VERSION=${DRONE_TAG##*v}
+  when:
+    ref:
+    - refs/tags/rocr-v**
+
+- name: publish-rocm-opencl-runtime
+  image: plugins/docker
+  settings:
+    repo: kayuii/rocm-opencl-runtime
     tags:
     - latest
     - 20.04
@@ -52,7 +75,6 @@ steps:
   when:
     ref:
     - refs/tags/rocr-v**
-
 
 
 ...
