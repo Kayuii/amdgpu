@@ -31,6 +31,7 @@ platform:
 trigger:
   ref:
   - refs/tags/rocr-v**
+  - refs/tags/amdgpu-v**
 
 steps:
 - name: helloworld
@@ -76,5 +77,22 @@ steps:
     ref:
     - refs/tags/rocr-v**
 
+- name: publish-amdgpu
+  image: plugins/docker
+  settings:
+    repo: kayuii/amdgpu
+    tags:
+    - latest
+    - v${DRONE_TAG##*v}
+    dockerfile: amdgpu/Dockerfile-ubuntu-20.04
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    build_args:
+    - AMDGPU_VERSION=${DRONE_TAG##*v}
+  when:
+    ref:
+    - refs/tags/amdgpu-v**
 
 ...

@@ -11,6 +11,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-ins
   && curl -sL https://repo.radeon.com/rocm/rocm.gpg.key | apt-key add - \
   && printf "deb [arch=amd64] https://repo.radeon.com/rocm/apt/$ROCM_VERSION/ ubuntu main" | tee /etc/apt/sources.list.d/rocm.list \
   && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+  rocminfo \
   rocm-opencl-runtime && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/*
